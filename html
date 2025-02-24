@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campo Conecta</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0066cc, #003366);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #0066cc;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        h2, h3 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #0066cc;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #ff6600;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e65a00;
+            transform: scale(1.02);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin: 10px 0;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-button {
+            background-color: #0066cc;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: auto;
+            transition: all 0.3s ease;
+        }
+
+        .profile-button:hover {
+            background-color: #004da3;
+            transform: scale(1.05);
+        }
+
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="authContainer">
+    <h1>Campo Conecta</h1>
+    <form id="loginForm">
+        <h2>Login</h2>
+        <label for="emailLogin">Email:</label>
+        <input type="email" id="emailLogin" placeholder="Digite seu email" required>
+        <label for="passwordLogin">Senha:</label>
+        <input type="password" id="passwordLogin" placeholder="Digite sua senha" required>
+        <button type="button" id="loginButton">Entrar</button>
+    </form>
+
+    <form id="registerForm" class="hidden">
+        <h2>Registrar-se</h2>
+        <label for="userType">Eu sou:</label>
+        <select id="userType">
+            <option value="produtor">Produtor</option>
+            <option value="comprador">Comprador</option>
+        </select>
+        <label for="emailRegister">Email:</label>
+        <input type="email" id="emailRegister" placeholder="Digite seu email" required>
+        <label for="name">Nome completo:</label>
+        <input type="text" id="name" placeholder="Digite seu nome completo" required>
+        <label for="phoneNumber">Telefone:</label>
+        <input type='text' id="phoneNumber" placeholder="Digite seu número de telefone" required>
+        <label for="passwordRegister">Senha:</label>
+        <input type="password" id="passwordRegister" placeholder="Digite sua senha" required>
+        <button type="button" id="registerButton">Registrar</button>
+    </form>
+
+    <p id="toggleAuth">Ainda não tem uma conta? <a href="#" onclick="toggleForms()">Registre-se aqui</a></p>
+</div>
+
+<div class="container hidden" id="feedContainer">
+    <p class="welcome-message">Seja bem-vindo, <span id="userName">Usuário</span>!</p>
+    <h1 id="feedTitle">Bem-vindo ao Feed</h1> <!-- Adicionei o id="feedTitle" aqui -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <button class="profile-button" id="profileButton">Meu Perfil</button>
+        <button class="profile-button" onclick="logout()">Sair</button>
+    </div>
+    <div class="post-section">
+        <h3>Criar uma postagem:</h3>
+        <textarea id="postContent" placeholder="Digite o que deseja postar..."></textarea>
+        <input type="file" id="imageUpload" accept="image/*">
+        <button id="postButton">Postar</button>
+    </div>
+    <h3>Postagens:</h3>
+    <ul id="postList"></ul>    
+</div>
+
+<div class="container hidden" id="profileContainer">
+    <h1>Perfil</h1>
+    <p><strong>Email:</strong> <span id="profileEmail">Carregando...</span></p>
+    <p><strong>Tipo:</strong> <span id="profileUserType">Carregando...</span></p>
+    <p><strong>Telefone:</strong> <span id="profilePhone">Carregando...</span></p>
+
+    <h3>Notificações:</h3>
+    <ul id="notificationsList">
+         <ul id="notificationList"></ul>
+        <li>Sem notificações no momento.</li>
+    </ul>
+    <button id="returnToFeedButton">Voltar ao Feed</button>
+    <button onclick="clearNotifications()">Limpar Notificações</button>
+</div>
+ <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, getDoc,getDocs, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-storage.js";
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6MH4IiYrFBx4UtT0ijXcx5jqCwybSNlM",
+        authDomain: "campo-conecta-792a6.firebaseapp.com",
+        projectId: "campo-conecta-792a6",
+        storageBucket: "campo-conecta-792a6.appspot.com",
+        messagingSenderId: "722459678882",
+        appId: "1:722459678882:web:a5293441f51a10c764dffb",
+        measurementId: "G-CNWKCNB64Y"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    /// Função para chamar o backend (App Script) que envia a mensagem via WhatsApp
+    async function sendWhatsAppNotification(phoneNumber, message) {
+    const apiKey = "1253447"; // Substitua pelo seu código da API do CallMeBot
+    const url = `https://api.callmebot.com/whatsapp.php?phone=${43996811736}&text=${encodeURIComponent(message)}&apikey=${12447}`;
+
+    try {
+        const response = await fetch(url);
+        const result = await response.text();
+        console.log("Mensagem enviada:", result);
+    } catch (error) {
+        console.error("Erro ao enviar mensagem:", error);
+    }
+}
+
+    // Função para carregar postagens em tempo real
+    // Função para carregar postagens em tempo real
+async function loadPostsRealtime() {
+    const postList = document.getElementById('postList');
+    postList.innerHTML = ''; // Limpa a lista antes de renderizar os posts novamente
+
+    try {
+        const postsRef = collection(db, "posts");
+
+        // Carrega as postagens existentes uma vez
+        const querySnapshot = await getDocs(postsRef); // Carrega postagens existentes
+        querySnapshot.forEach((doc) => {
+            const post = doc.data();
+            renderPost(post, doc.id); // Renderiza cada post
+        });
+
+        // Ativa o onSnapshot para escutar alterações em tempo real
+        onSnapshot(postsRef, (snapshot) => {
+            console.log("Snapshot recebido:", snapshot); // Verifique se os dados estão sendo recebidos
+            postList.innerHTML = ''; // Limpa a lista antes de renderizar novamente
+
+            snapshot.forEach((doc) => {
+                const post = doc.data();
+                renderPost(post, doc.id); // Renderiza cada post
+            });
+        });
+
+    } catch (error) {
+        alert('Erro ao carregar postagens: ' + error.message);
+    }
+}
+
+async function renderPost(post, postId) {
+    const postList = document.getElementById('postList');
+    const li = document.createElement('li');
+
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'post-content';
+    contentDiv.textContent = post.content;
+
+    // Se houver uma URL de imagem, exibe a imagem
+    if (post.imageURL) {
+        const imageElement = document.createElement('img');
+        imageElement.src = post.imageURL;
+        imageElement.alt = 'Post image';
+        imageElement.className = 'post-image';
+        li.appendChild(imageElement);
+    }
+
+    const metaDiv = document.createElement('div');
+    metaDiv.className = 'post-meta';
+
+    // Carregar o nome do autor da postagem
+    try {
+        const userRef = doc(db, "users", post.uid); // Acessa a coleção de usuários
+        const userDoc = await getDoc(userRef);
+        const userName = userDoc.exists() ? userDoc.data().name : 'Usuário Desconhecido';
+
+        // Aqui, exibe o nome do usuário em vez do UID
+        metaDiv.innerHTML = `<span class='post-author'>Por: ${userName}</span> <span class='timestamp'>${new Date(post.timestamp?.toDate()).toLocaleString()}</span>`;
+    } catch (error) {
+        console.error('Erro ao buscar o nome do usuário:', error);
+        metaDiv.innerHTML = `<span class='post-author'>Por: Usuário Desconhecido</span> <span class='timestamp'>${new Date(post.timestamp?.toDate()).toLocaleString()}</span>`;
+    }
+
+    const interestButton = document.createElement('button');
+    interestButton.textContent = 'Demonstrar Interesse';
+    interestButton.className = 'interest-button';
+    interestButton.addEventListener('click', () => declareInterest(postId, post.uid));
+
+    li.appendChild(contentDiv);
+    li.appendChild(metaDiv);
+    li.appendChild(interestButton);
+
+    postList.appendChild(li);
+}
+    // Função para declarar interesse
+    async function declareInterest(postId, postOwnerId) {
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Você precisa estar logado para demonstrar interesse.");
+        return;
+    }
+
+    if (!postId || !postOwnerId) {
+        alert("Informações do post ou do autor estão incompletas.");
+        return;
+    }
+
+    try {
+        // Buscar dados do post
+        const postRef = doc(db, "posts", postId);
+        const postDoc = await getDoc(postRef);
+        const postContent = postDoc.data().content;
+
+        // Buscar dados do usuário interessado
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+        const userName = userDoc.data().name;
+        const userPhone = userDoc.data().phone;
+
+        // Buscar dados do dono do post
+        const ownerRef = doc(db, "users", postOwnerId);
+        const ownerDoc = await getDoc(ownerRef);
+        const ownerPhone = ownerDoc.data().phone;
+
+        // Atualizar a lista de interessados no post
+        await updateDoc(postRef, {
+            interestedUsers: arrayUnion(user.uid)
+        });
+
+        // Atualizar notificações do dono do post
+        await updateDoc(ownerRef, {
+            notifications: arrayUnion({
+                type: "interest",
+                from: user.uid,
+                postId: postId,
+                timestamp: new Date().toISOString()
+            })
+        });
+
+        // Criar a mensagem para enviar via WhatsApp
+        const message = `🚀 Alguém se interessou no seu post!\n\n👤 Nome: ${userName}\n📞 Contato: ${userPhone}\n📌 Post: ${postContent}`;
+
+        // Enviar mensagem pelo WhatsApp usando CallMeBot
+        await sendWhatsAppNotification(ownerPhone, message);
+
+        alert("Interesse declarado com sucesso! O dono do post foi notificado no WhatsApp.");
+    } catch (error) {
+        alert("Erro ao declarar interesse: " + error.message);
+    }
+}
+
+    // Função de postagem
+    document.getElementById('postButton').addEventListener('click', async () => {
+        const postContent = document.getElementById('postContent').value;
+        const imageFile = document.getElementById('imageUpload').files[0];
+        const user = auth.currentUser;
+
+        console.log('Conteúdo da postagem:', postContent);
+        console.log('Arquivo da imagem:', imageFile);
+
+        if (!postContent.trim()) {
+            alert('O conteúdo da postagem não pode estar vazio.');
+            return;
+        }
+
+        try {
+            let imageURL = null;
+
+            // Função para converter imagem para base64
+            const convertToBase64 = (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            // Se houver uma imagem, converte para base64
+            if (imageFile) {
+                const base64Image = await convertToBase64(imageFile);
+                console.log('Imagem convertida para base64:', base64Image);
+
+                // Agora podemos criar a postagem, com a imagem convertida para base64
+                const postRef = doc(collection(db, "posts"));
+                await setDoc(postRef, {
+                    uid: user.uid,
+                    content: postContent,
+                    imageURL: base64Image,  // Usa a imagem em base64
+                    timestamp: new Date(),
+                    interestedUsers: []
+                });
+
+                console.log('Postagem criada com sucesso!');
+                alert('Postagem criada com sucesso!');
+                document.getElementById('postContent').value = '';
+                document.getElementById('imageUpload').value = '';  // Limpar o campo de upload de imagem
+            } else {
+                // Se não houver imagem, apenas cria a postagem
+                const postRef = doc(collection(db, "posts"));
+                await setDoc(postRef, {
+                    uid: user.uid,
+                    content: postContent,
+                    timestamp: new Date(),
+                    interestedUsers: []
+                });
+
+                console.log('Postagem criada sem imagem!');
+                alert('Postagem criada com sucesso!');
+                document.getElementById('postContent').value = '';
+            }
+
+        } catch (error) {
+            console.error('Erro ao criar postagem:', error);
+            alert('Erro ao criar postagem: ' + error.message);
+        }
+    });
+
+    // Função para mostrar o feed
+    async function showFeed(userType) {
+        document.getElementById('authContainer').classList.add('hidden');
+        document.getElementById('feedContainer').classList.remove('hidden');
+
+        const feedTitle = document.getElementById('feedTitle');
+        const oppositeType = userType === "produtor" ? "comprador" : "produtor";
+        feedTitle.textContent = `Recomendações de ${oppositeType}s:`;
+
+        loadPostsRealtime();
+    }
+
+    // Função de login
+    document.getElementById('loginButton').addEventListener('click', async () => {
+        const email = document.getElementById('emailLogin').value;
+        const password = document.getElementById('passwordLogin').value;
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+                const userType = userDoc.data().userType;
+                showFeed(userType);
+            } else {
+                throw new Error("Usuário não encontrado no Firestore.");
+            }
+        } catch (error) {
+            alert('Erro ao fazer login: ' + error.message);
+        }
+    });
+
+    // Função de logout
+    async function logout() {
+        await signOut(auth);
+        alert('Você saiu!');
+        document.getElementById('feedContainer').classList.add('hidden');
+        document.getElementById('authContainer').classList.remove('hidden');
+    }
+
+    // Função de perfil
+    document.getElementById('profileButton').addEventListener('click', async () => {
+        const user = auth.currentUser;
+        if (!user) {
+            alert('Usuário não autenticado.');
+            return;
+        }
+
+        try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+
+                // Atualiza informações do perfil
+                document.getElementById('profileEmail').innerText = userData.email || 'Não informado';
+                document.getElementById('profileUserType').innerText = userData.userType || 'Não especificado';
+                document.getElementById('profilePhone').innerText = userData.phone || 'Não informado';
+
+                // Atualiza notificações
+                const notificationsList = document.getElementById('notificationsList');
+                notificationsList.innerHTML = ''; // Limpa as notificações anteriores
+                const notifications = userData.notifications || [];
+                if (notifications.length > 0) {
+                    notifications.forEach((notif, index) => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>Notificação ${index + 1}:</strong> Interesse no post ${notif.postId} por ${notif.from}`;
+                        notificationsList.appendChild(li);
+                    });
+                } else {
+                    notificationsList.innerHTML = '<li>Sem notificações.</li>';
+                }
+
+                // Redireciona para a página de perfil
+                document.getElementById('feedContainer').classList.add('hidden');
+                document.getElementById('profileContainer').classList.remove('hidden');
+            } else {
+                alert('Perfil não encontrado.');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar o perfil:', error);
+            alert('Ocorreu um erro ao carregar o perfil.');
+        }
+    });
+    // Alternar entre login e registro
+    window.toggleForms = function toggleForms() {
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const toggleLink = document.getElementById('toggleAuth');
+
+        if (loginForm.classList.contains('hidden')) {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            toggleLink.innerHTML = "Ainda não tem uma conta? <a href='#'>Registre-se aqui</a>";
+        } else {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            toggleLink.innerHTML = "Já tem uma conta? <a href='#'>Faça login aqui</a>";
+        }
+    };
+// Função para retornar ao feed
+function returnToFeed() {
+    document.getElementById('profileContainer').classList.add('hidden');
+    document.getElementById('feedContainer').classList.remove('hidden');
+    document.getElementById('returnToFeedButton').addEventListener('click', returnToFeed);
+
+}
+ // Função para registro
+ document.getElementById('registerButton').addEventListener('click', async () => {
+        const email = document.getElementById('emailRegister').value;
+        const password = document.getElementById('passwordRegister').value;
+        const userType = document.getElementById('userType').value;
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const name = document.getElementById('name').value;  // Captura o nome do usuário
+
+        if (!email || !password) {
+            alert('Por favor, preencha todos os campos.');
+            return;
+        }
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            await setDoc(doc(db, "users", user.uid), {
+                email: email,
+                userType: userType,
+                phone: phoneNumber,
+                name: name,
+                notifications: []
+            });
+
+            alert('Conta criada com sucesso!');
+            showFeed(userType);
+        } catch (error) {
+            alert('Erro ao registrar usuário: ' + error.message);
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+        const postList = document.getElementById("postList");
+        const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
+        savedPosts.forEach(post => renderPost(post));
+
+        const notificationList = document.getElementById("notificationList");
+        const savedNotifications = JSON.parse(localStorage.getItem("notifications")) || [];
+        savedNotifications.forEach(notif => renderNotification(notif));
+    });
+
+    function renderPost(content) {
+        const postList = document.getElementById("postList");
+        const li = document.createElement("li");
+        li.classList.add("post");
+        li.innerHTML = `${content} <div class="like-comment">
+            <button onclick="likePost(this)"><i class="fas fa-thumbs-up"></i></button>
+            <button onclick="commentPost(this)"><i class="fas fa-comment"></i></button>
+        </div>`;
+        postList.appendChild(li);
+    }
+
+    function renderNotification(content) {
+        const notificationList = document.getElementById("notificationList");
+        const li = document.createElement("li");
+        li.textContent = content;
+        notificationList.appendChild(li);
+    }
+
+
+
+    function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+    }
+    });
+</script>
+</body>
+</html>
